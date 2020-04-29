@@ -33,9 +33,9 @@ To create a north task to send to another Fledge you should first create the |ht
 
   - Configure the HTTP-C plugin
 
-    +----------=
+    +----------+
     | |http_1| |
-    +----------=
+    +----------+
 
     - **URL**: The URL of the receiving |http-south|, the address and port should match the service in the up stream Fledge. The URL can specify either HTTP or HTTPS protocols.
 
