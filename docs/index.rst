@@ -15,6 +15,8 @@ North HTTP-C
 
 The *fledge-north-http-c* plugin allows data to be sent from the north of one Fledge instance into the south of another Fledge instance. It allows hierarchies of Fledge instances to be built. The Fledge to which the data is sent must run the corresponding |http-south| in order for data to flow between the two Fledge instances. The plugin supports both HTTP and HTTPS transport protocols and sends a JSON payload of reading data in the internal Fledge format.
 
+Additionally this plugin allows for two URL's to be configured, a primary URL and a secondary URL. If the connection to the primary URL fails then the plugin will switch over to using the secondary URL. It will switch back if the connection to the secondary fails or if when the north task completes and a new north task is later run.
+
 The plugin may also be used to send data from Fledge to another system, the receiving system should implement a REST end point that will accept a POST request containing JSON data. The format of the JSON payload is described below. The required REST endpoint path is defined in the configuration of the plugin.
 
 Filters may be applied to the connection in either the north task that loads this plugin or the receiving south service on the up stream Fledge.
@@ -40,6 +42,8 @@ To create a north task to send to another Fledge you should first create the |ht
     +----------+
 
     - **URL**: The URL of the receiving |http-south|, the address and port should match the service in the up stream Fledge. The URL can specify either HTTP or HTTPS protocols.
+
+    - **Secondary URL**: The URL to failover to if the connection to the primary URL fails. If failover is not required then leave this field empty.
 
     - **Source**: The data to send, this may be either the reading data or the statistics data
 
