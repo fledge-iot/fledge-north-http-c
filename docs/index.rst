@@ -4,11 +4,11 @@
 .. Links
 .. |http-python| raw:: html
 
-   <a href="../fledge-north-http/index.html">Python version</a>
+   <a href="../fledge-north-http_north/index.html">Python version</a>
 
 .. |http-south| raw:: html
 
-   <a href="../fledge-south-http/index.html">South service</a>
+   <a href="../fledge-south-http_south/index.html">South service</a>
 
 North HTTP-C
 ============
