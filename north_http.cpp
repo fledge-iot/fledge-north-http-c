@@ -132,7 +132,7 @@ void HttpNorth::getReadingString(string& value, const Reading& reading)
  * @param config	The plugin configuration
  * @param url		The url to connect to
  */
-HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url)
+HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sender(NULL)
 {
 	/**
 	 * Handle the HTTP(S) parameters here
@@ -174,6 +174,15 @@ HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url)
 							 maxRetry);
 
 	m_header.push_back(pair<string, string>("Content-Type", "application/json"));
+}
+
+/**
+ * Desstructor fo the HttpStream
+ */
+HttpNorth::HttpStream::~HttpStream()
+{
+	if (m_sender)
+		delete m_sender;
 }
 
 /**
