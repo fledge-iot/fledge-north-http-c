@@ -132,6 +132,7 @@ void HttpNorth::getReadingString(string& value, const Reading& reading)
  * @param config	The plugin configuration
  * @param url		The url to connect to
  */
+
 HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sender(NULL)
 {
 	/**
