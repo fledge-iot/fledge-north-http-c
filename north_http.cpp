@@ -120,7 +120,14 @@ void HttpNorth::getReadingString(string& value, const Reading& reading)
 			first = false;
 		else
 			value.append(",");
-		value.append("\"" + (*it)->getName() + "\": " + (*it)->getData().toString());
+		if ((*it)->getData().getType() == DatapointValue::T_STRING)
+		{
+			value.append("\"" + (*it)->getName() + "\": " + (*it)->getData().toStringValue());
+		}
+		else
+		{
+			value.append("\"" + (*it)->getName() + "\": " + (*it)->getData().toString());
+		}
 	}
 
 	value.append("}}");
