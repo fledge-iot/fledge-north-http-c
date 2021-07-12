@@ -10,6 +10,7 @@
 
 #include <http_north.h>
 #include <iostream>
+#include <string_utils.h>
 
 using namespace std;
 
@@ -122,7 +123,9 @@ void HttpNorth::getReadingString(string& value, const Reading& reading)
 			value.append(",");
 		if ((*it)->getData().getType() == DatapointValue::T_STRING)
 		{
-			value.append("\"" + (*it)->getName() + "\": " + (*it)->getData().toStringValue());
+			string str = (*it)->getData().toStringValue();
+			StringEscapeQuotes(str);
+			value.append("\"" + (*it)->getName() + "\": \"" + str + "\"");
 		}
 		else
 		{
