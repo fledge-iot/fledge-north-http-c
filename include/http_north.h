@@ -27,6 +27,7 @@ class HttpNorth {
 			public:
 				HttpStream(ConfigCategory *config, std::string& url);
 				~HttpStream();
+				void		addHeader(const std::string& name, const std::string& value);
 				bool		send(const std::string& data);
 			private:
 				std::vector<std::pair<std::string, std::string>>
