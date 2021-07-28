@@ -49,6 +49,13 @@ static const char *default_config = QUOTE({
 			"order": "2",
 			"displayName": "Source"
 			},
+		"headers": {
+			"description": "An optional set of header fields expressed as a JSON document",
+			"type": "JSON",
+			"default": "{}",
+			"order": "3",
+			"displayName": "Headers"
+			},
 		"retrySleepTime": {
         		"description": "Seconds between each retry for the communication, NOTE : the time is doubled at each attempt.",
 			"type": "integer",

@@ -11,8 +11,10 @@
 #include <http_north.h>
 #include <iostream>
 #include <string_utils.h>
+#include <rapidjson/document.h>
 
 using namespace std;
+using namespace rapidjson;
 
 /**
  * Constructor for the north HTTP plugin class.
@@ -29,6 +31,23 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 		m_secondary = new HttpStream(config, url);
 	else
 		m_secondary = NULL;
+	string headers = config->getValue("headers");
+	Document doc;
+	doc.Parse(headers.c_str());
+	if (doc.HasParseError() == false && doc.IsObject())
+	{
+		for (auto& m : doc.GetObject())
+		{
+			if (m.value.IsString())
+			{
+				string name = m.name.GetString();
+				string value = m.value.GetString();
+				m_primary->addHeader(name, value);
+				if (m_secondary)
+					m_secondary->addHeader(name, value);
+			}
+		}
+	}
 }
 
 /**
@@ -194,6 +213,17 @@ HttpNorth::HttpStream::~HttpStream()
 {
 	if (m_sender)
 		delete m_sender;
+}
+
+/**
+ * Add header fields
+ *
+ * @param name	The header field name
+ * @param value	the header field value
+ */
+void HttpNorth::HttpStream::addHeader(const string& name, const string& value)
+{
+	m_header.push_back(pair<string, string>(string(name), string(value)));
 }
 
 /**

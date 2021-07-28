@@ -47,6 +47,8 @@ To create a north task to send to another Fledge you should first create the |ht
 
     - **Source**: The data to send, this may be either the reading data or the statistics data
 
+    - **Headers**: An optional set of header fields to send in every request. The headers are defined as a JSON document with the name of each item in the document as header field name and the value the value of the header field.
+
     - **Sleep Time Retry**: A tuning parameter used to control how often a connection is retried to the up stream Fledge if it is not available. On every retry the time will be doubled.
 
     - **Maximum Retry**: The maximum number of retries to make a connection to the up stream Fledge. When this number is reached the current execution of the task is suspended until the next scheduled run.
@@ -63,6 +65,18 @@ To create a north task to send to another Fledge you should first create the |ht
 
   - Enable your task and click *Done*
 
+Header Fields
+-------------
+
+Header fields can be defined if required using the *Headers* configuration item. This is a JSON document that defines a set of key/value pairs for each header field. For example if a header field *token* was required with the value of *sfe93rjfk93rj* then the *Headers* JSON document would be as follows
+
+.. code-block:: console
+
+    {
+        "token" : "sfe93rjfk93rj"
+    }
+
+Multiple header fields may be set by specifying multiple key/value pairs in the JSON document.
 
 JSON Payload
 ------------
