@@ -68,7 +68,7 @@ To create a north task to send to another Fledge you should first create the |ht
 Header Fields
 -------------
 
-Header fields can be defined if required using the *Headers* configuration item. this is a JSON document that defines a set of key/value pairs for each header field. For example if a header field *token* was required with the value of *sfe93rjfk93rj* then the *Headers* JSON document would be as follows
+Header fields can be defined if required using the *Headers* configuration item. This is a JSON document that defines a set of key/value pairs for each header field. For example if a header field *token* was required with the value of *sfe93rjfk93rj* then the *Headers* JSON document would be as follows
 
 .. code-block:: console
 
@@ -76,7 +76,7 @@ Header fields can be defined if required using the *Headers* configuration item.
         "token" : "sfe93rjfk93rj"
     }
 
-Multiple header fields may be set by specifying multiple key/value pairs inthe JSON document.
+Multiple header fields may be set by specifying multiple key/value pairs in the JSON document.
 
 JSON Payload
 ------------
