@@ -38,7 +38,7 @@ static const char *default_config = QUOTE({
 			"description": "The URL of the HTTP Connector to send data to if the primary is unavailable, if empty there is no secondary",
 			"type": "string",
 			"default": "",
-			"order": "1",
+			"order": "2",
 			"displayName": "Secondary URL"
 			},
 		"source": {
@@ -46,56 +46,56 @@ static const char *default_config = QUOTE({
 			"type": "enumeration",
 			"default": "readings",
 			"options": [ "readings", "statistics"],
-			"order": "2",
+			"order": "3",
 			"displayName": "Source"
 			},
 		"headers": {
 			"description": "An optional set of header fields expressed as a JSON document",
 			"type": "JSON",
 			"default": "{}",
-			"order": "3",
+			"order": "4",
 			"displayName": "Headers"
 			},
 		"retrySleepTime": {
         		"description": "Seconds between each retry for the communication, NOTE : the time is doubled at each attempt.",
 			"type": "integer",
 			"default": "1",
-			"order": "9",
+			"order": "5",
 			"displayName" : "Sleep Time Retry"
 			},
 		"maxRetry": {
 			"description": "Max number of retries for the communication",
 			"type": "integer",
 			"default": "3",
-			"order": "10",
+			"order": "6",
 			"displayName" : "Maximum Retry"
 			},
 		"HttpTimeout": {
 			"description": "Timeout in seconds for the HTTP operations with the HTTP Connector Relay",
 			"type": "integer",
 			"default": "10",
-			"order": "13",
+			"order": "7",
 			"displayName": "Http Timeout (in seconds)"
 			},
 		"verifySSL": {
         		"description": "Verify SSL certificate",
 			"type": "boolean",
 			"default": "False",
-			"order": "14",
+			"order": "8",
 			"displayName": "Verify SSL"
 			},
 		"applyFilter": {
         		"description": "Whether to apply filter before processing the data",
 			"type": "boolean",
 			"default": "False",
-			"order": "15",
+			"order": "9",
 			"displayName": "Apply Filter"
 			},
 		"filterRule": {
 			"description": "JQ formatted filter to apply (applicable if applyFilter is True)",
 			"type": "string",
 			"default": ".[]",
-			"order": "16",
+			"order": "10",
 			"displayName": "Filter Rule"
 			}
 	});
