@@ -181,8 +181,17 @@ HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sende
 	string hostName = tmpUrl.substr(0, findPort);
 
 	size_t findPath = tmpUrl.find_first_of("/");
-	string port = tmpUrl.substr(findPort + 1 , findPath - findPort -1);
-	m_path = tmpUrl.substr(findPath);
+	string port;
+	if (findPath == string::npos)
+	{
+		port = tmpUrl.substr(findPort + 1);
+		m_path = "/";
+	}
+	else
+	{
+		port = tmpUrl.substr(findPort + 1 , findPath - findPort -1);
+		m_path = tmpUrl.substr(findPath);
+	}
 
 	/**
 	 * Allocate the HTTP(S) handler for "Hostname : port",
@@ -234,6 +243,8 @@ void HttpNorth::HttpStream::addHeader(const string& name, const string& value)
  */
 bool HttpNorth::HttpStream::send(const string& data)
 {
+	// FIXME
+	Logger::getLogger()->fatal("Data: %s", data.c_str());
 	try
 	{
 		int res = m_sender->sendRequest("POST", m_path, m_header, data);
