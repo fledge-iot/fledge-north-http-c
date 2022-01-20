@@ -243,8 +243,6 @@ void HttpNorth::HttpStream::addHeader(const string& name, const string& value)
  */
 bool HttpNorth::HttpStream::send(const string& data)
 {
-	// FIXME
-	Logger::getLogger()->fatal("Data: %s", data.c_str());
 	try
 	{
 		int res = m_sender->sendRequest("POST", m_path, m_header, data);
