@@ -181,8 +181,17 @@ HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sende
 	string hostName = tmpUrl.substr(0, findPort);
 
 	size_t findPath = tmpUrl.find_first_of("/");
-	string port = tmpUrl.substr(findPort + 1 , findPath - findPort -1);
-	m_path = tmpUrl.substr(findPath);
+	string port;
+	if (findPath == string::npos)
+	{
+		port = tmpUrl.substr(findPort + 1);
+		m_path = "/";
+	}
+	else
+	{
+		port = tmpUrl.substr(findPort + 1 , findPath - findPort -1);
+		m_path = tmpUrl.substr(findPath);
+	}
 
 	/**
 	 * Allocate the HTTP(S) handler for "Hostname : port",
