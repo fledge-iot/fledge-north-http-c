@@ -31,6 +31,13 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 		m_secondary = new HttpStream(config, url);
 	else
 		m_secondary = NULL;
+	if (config->itemExists("proxy"))
+	{
+		string proxy = config->getValue("proxy");
+		m_primary->setProxy(proxy);
+		if (m_secondary)
+			m_secondary->setProxy(proxy);
+	}
 	string headers = config->getValue("headers");
 	Document doc;
 	doc.Parse(headers.c_str());
@@ -222,6 +229,16 @@ HttpNorth::HttpStream::~HttpStream()
 {
 	if (m_sender)
 		delete m_sender;
+}
+
+/**
+ * Set a proxy server for the HTTP connection
+ *
+ * @param proxy	The host and port of the proxy server
+ */
+void HttpNorth::HttpStream::setProxy(const string& proxy)
+{
+	m_sender->setProxy(proxy);
 }
 
 /**
