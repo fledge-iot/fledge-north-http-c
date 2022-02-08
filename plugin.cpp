@@ -42,7 +42,7 @@ static const char *default_config = QUOTE({
 			"displayName": "Secondary URL"
 			},
 		"proxy": {
-			"description": "The name or address and port of a proxy server to use",
+			"description": "The name or address and port of a proxy server to use. This should be formatted as <hostname>:<port> or <address:port>",
 			"type": "string",
 			"default": "",
 			"order": "3",

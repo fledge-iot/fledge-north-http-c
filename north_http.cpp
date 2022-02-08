@@ -34,6 +34,28 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 	if (config->itemExists("proxy"))
 	{
 		string proxy = config->getValue("proxy");
+		if (proxy.compare(0, 5, "http:") == 0 || proxy.compare(0, 5, "HTTP:") == 0 
+				|| proxy.compare(0, 6, "https:") == 0  || proxy.compare(0, 6, "HTTPS:") == 0)
+		{
+			Logger::getLogger()->warn("Expected proxy address without protocol prefix");
+			size_t found = proxy.find_first_of("//");
+			if (found != string::npos)
+			{
+				found += 2;
+				string s = proxy.substr(found);
+				found = s.find_first_of("/");
+				if (found != string::npos)
+				{
+					proxy = s.substr(0, found);
+				}
+				else
+				{
+					proxy = s;
+				}
+				Logger::getLogger()->warn("Stripped of URL components to use '%s' as proxy", proxy.c_str());
+			}
+		}
+		Logger::getLogger()->info("Using proxy server %s", proxy.c_str());
 		m_primary->setProxy(proxy);
 		if (m_secondary)
 			m_secondary->setProxy(proxy);
