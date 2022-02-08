@@ -31,6 +31,35 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 		m_secondary = new HttpStream(config, url);
 	else
 		m_secondary = NULL;
+	if (config->itemExists("proxy"))
+	{
+		string proxy = config->getValue("proxy");
+		if (proxy.compare(0, 5, "http:") == 0 || proxy.compare(0, 5, "HTTP:") == 0 
+				|| proxy.compare(0, 6, "https:") == 0  || proxy.compare(0, 6, "HTTPS:") == 0)
+		{
+			Logger::getLogger()->warn("Expected proxy address without protocol prefix");
+			size_t found = proxy.find_first_of("//");
+			if (found != string::npos)
+			{
+				found += 2;
+				string s = proxy.substr(found);
+				found = s.find_first_of("/");
+				if (found != string::npos)
+				{
+					proxy = s.substr(0, found);
+				}
+				else
+				{
+					proxy = s;
+				}
+				Logger::getLogger()->warn("Stripped of URL components to use '%s' as proxy", proxy.c_str());
+			}
+		}
+		Logger::getLogger()->info("Using proxy server %s", proxy.c_str());
+		m_primary->setProxy(proxy);
+		if (m_secondary)
+			m_secondary->setProxy(proxy);
+	}
 	string headers = config->getValue("headers");
 	Document doc;
 	doc.Parse(headers.c_str());
@@ -222,6 +251,16 @@ HttpNorth::HttpStream::~HttpStream()
 {
 	if (m_sender)
 		delete m_sender;
+}
+
+/**
+ * Set a proxy server for the HTTP connection
+ *
+ * @param proxy	The host and port of the proxy server
+ */
+void HttpNorth::HttpStream::setProxy(const string& proxy)
+{
+	m_sender->setProxy(proxy);
 }
 
 /**

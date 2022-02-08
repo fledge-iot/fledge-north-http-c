@@ -12,7 +12,7 @@
 /**
  * THe HTTP North C++ class
  *
- * The class support two stream, a primary and secondary. It will swithc between
+ * The class support two stream, a primary and secondary. It will switch between
  * them if a connection fails to the current stream.
  */
 class HttpNorth {
@@ -28,6 +28,7 @@ class HttpNorth {
 				HttpStream(ConfigCategory *config, std::string& url);
 				~HttpStream();
 				void		addHeader(const std::string& name, const std::string& value);
+				void		setProxy(const std::string& proxy);
 				bool		send(const std::string& data);
 			private:
 				std::vector<std::pair<std::string, std::string>>
