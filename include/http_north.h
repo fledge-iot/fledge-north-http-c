@@ -8,6 +8,7 @@
 #include "config_category.h"
 #include <vector>
 #include <mutex>
+#include <python_script.h>
 
 /**
  * THe HTTP North C++ class
@@ -37,9 +38,13 @@ class HttpNorth {
 				std::string	m_path;
 		};
 		void		getReadingString(std::string& value, const Reading& reading);
+		bool		sendData(const std::string& data);
 		HttpStream	*m_primary;
 		HttpStream	*m_secondary;
 		bool		m_failedOver;
 		std::mutex	m_mutex;
+		std::string	m_script;
+		std::string	m_content;
+		PythonScript	*m_python;
 };
 #endif
