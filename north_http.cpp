@@ -100,7 +100,7 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 }
 
 /**
- * Destructor fo rthe HTTP north class
+ * Destructor for the HTTP north class
  */
 HttpNorth::~HttpNorth()
 {
@@ -108,6 +108,8 @@ HttpNorth::~HttpNorth()
 		delete m_primary;
 	if (m_secondary)
 		delete m_secondary;
+	if (m_python)
+		delete m_python;
 }
 
 /**
@@ -133,7 +135,7 @@ uint32_t HttpNorth::send(const vector<Reading *> readings)
 		for (vector<Reading *>::const_iterator elem = readings.begin(); elem != readings.end(); ++elem)
 		{
 			if (m_python->execute(*elem, data) && sendData(data))
-			{
+		{
 				rval++;
 			}
 			else
@@ -175,6 +177,7 @@ uint32_t HttpNorth::send(const vector<Reading *> readings)
  */
 bool HttpNorth::sendData(const string& data)
 {
+	Logger::getLogger()->debug("Send data %s", data.c_str());
 	lock_guard<mutex> guard(m_mutex);
 	if (m_failedOver)
 	{
