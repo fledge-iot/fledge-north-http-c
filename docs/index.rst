@@ -51,6 +51,8 @@ To create a north task to send to another Fledge you should first create the |ht
 
     - **Headers**: An optional set of header fields to send in every request. The headers are defined as a JSON document with the name of each item in the document as header field name and the value the value of the header field.
 
+    - **Script**: An optional Python script that can be used to convert the payload format. If given the script should contain a method called *convert* that will be passed a single reading as a JSON DICT and must return the new payload as a string.
+
     - **Sleep Time Retry**: A tuning parameter used to control how often a connection is retried to the up stream Fledge if it is not available. On every retry the time will be doubled.
 
     - **Maximum Retry**: The maximum number of retries to make a connection to the up stream Fledge. When this number is reached the current execution of the task is suspended until the next scheduled run.
@@ -59,9 +61,6 @@ To create a north task to send to another Fledge you should first create the |ht
 
     - **Verify SSL**: When HTTPS rather the HTTP is used this toggle allows for the verification of the certificate that is used. If a self signed certificate is used then this should not be enabled.
 
-    - **Apply Filter**: This allows a simple jq format filter rule to be applied to the connection. This should not be confused with Fledge filters and exists for backward compatibility reason only.
-
-    - **Filter Rule**: A jq filter rule to apply. Since the introduction of Fledge filters in the north task this has become deprecated and should not be used.
 
   - Click *Next*
 
@@ -90,9 +89,16 @@ The fixed part of every reading contains the following
 +-----------+----------------------------------------------------------------+
 | Name      | Description                                                    |
 +===========+================================================================+
-| timestamp | The timestamp as an ASCII string in ISO 8601 extended format.  |
+| ts        | The timestamp as an ASCII string in ISO 8601 extended format.  |
 |           | If no time zone information is given it is assumed to indicate |
-|           | the use of UTC.                                                |
+|           | the use of UTC.  This timestamp is added by Fledge when it     |
+|           | first reads the data.                                          |
++-----------+----------------------------------------------------------------+
+| user_ts   | The timestamp as an ASCII string in ISO 8601 extended format.  |
+|           | If no time zone information is given it is assumed to indicate |
+|           | the use of UTC. This timestamp is added by the device itself   |
+|           | and can be used to reflect the timestamp the data refers to    |
+|           | rather than the timestamp Fledge read the data.                |
 +-----------+----------------------------------------------------------------+
 | asset     | The name of the asset this reading represents.                 |
 +-----------+----------------------------------------------------------------+
@@ -133,7 +139,8 @@ An example payload with a single reading would be as shown below
 
     [
        {
-           "timestamp" : "2020-07-08 16:16:07.263657+00:00",
+           "user_ts"   : "2020-07-08 16:16:07.263657+00:00",
+           "ts"        : "2020-07-08 16:16:07.263657+00:00",
            "asset"     : "motor1",
            "readings"  : {
                          "voltage"  : 239.4,
@@ -143,4 +150,71 @@ An example payload with a single reading would be as shown below
        }
    ]
 
+Payload Script
+--------------
 
+If a script is given then it must provide a method called *convert*, that method is passed a single reading as a Python DICT and must return a formatted string payload for that reading.
+
+As a simple example lets assume we want a JSON payload to be sent, but we want to use different keys to those in the default reading payload. We will replaces *readings* with *data*, *user_ts* with *when* and *asset* with *device*. A simple Python script to do this would be as follows;
+
+.. code-block:: python
+
+   import json
+   def convert(reading):
+       newReading = {
+          "data" : reading["readings"],
+          "when" : reading["user_ts"],
+          "device" : reading["asset"],
+       }
+       return json.dumps(newReading)
+
+An HTTP request would be sent with one reading per request and that reading would be formatted as a JSON payload of the format
+
+.. code-block:: console
+
+   {
+       "data":
+       {
+           "sinusoid": 0.0,
+           "sine10": 10.0
+       },
+        "when": "2022-02-16 15:12:55.196494+00:00",
+        "device": "sinusoid"
+   }
+
+Note that white space and newlines have been added to improve the readability of the payload.
+
+The above example returns a JSON format payload, the return may however not be encoded as JSON, for example an XML payload
+
+.. code-block:: python
+
+   from dict2xml import dict2xml
+   def convert(reading):
+       newReading = {
+          "data" : reading["readings"],
+          "when" : reading["user_ts"],
+          "device" : reading["asset"],
+       }
+       payload = "<reading>" + dict2xml(newReading) + "</reading>"
+       return payload
+
+This return XML format data as follows
+
+.. code-block:: console
+
+   <reading>
+      <data>
+        <sine10>10.0</sine10>
+        <sinusoid>0.0</sinusoid>
+      </data>
+      <device>sinusoid</device>
+      <when>2022-02-16 15:12:55.196494+00:00</when>
+    </reading>
+
+Note that white space and formatting have been added for ease of reading the XML data. You must also make sure you have installed the Python XML support as this is not normally installed with Fledge, To do this run
+
+.. code-block:: console
+
+   pip3 install dict2xml
+
+from the command line of the Fledge machine.

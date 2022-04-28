@@ -42,6 +42,14 @@ set(NEEDED_FLEDGE_LIBS common-lib plugins-common-lib)
 # Find source files
 file(GLOB SOURCES *.cpp)
 
+# Find python3.x dev/lib package
+find_package(PkgConfig REQUIRED)
+if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
+    pkg_check_modules(PYTHON REQUIRED python3)
+else()
+    find_package(Python COMPONENTS Interpreter Development)
+endif()
+
 # Find Fledge includes and libs, by including FindFledge.cmak file
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR})
 find_package(Fledge)
@@ -61,6 +69,13 @@ include_directories(include)
 
 # Add Fledge include dir(s)
 include_directories(${FLEDGE_INCLUDE_DIRS})
+
+# Add Python 3.x header files
+if(${CMAKE_VERSION} VERSION_LESS "3.12.0")
+    include_directories(${PYTHON_INCLUDE_DIRS})
+else()
+    include_directories(${Python_INCLUDE_DIRS})
+endif()
 
 # Add other include paths this plugin needs
 if (FLEDGE_SRC)

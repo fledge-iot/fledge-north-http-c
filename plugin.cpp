@@ -63,47 +63,40 @@ static const char *default_config = QUOTE({
 			"order": "5",
 			"displayName": "Headers"
 			},
+		"script" : {
+			"description" : "An optional HTTP payload translation Python script",
+			"type" : "script",
+			"default" : "",
+			"order" : "6",
+			"displayName": "Script"
+			},
 		"retrySleepTime": {
         		"description": "Seconds between each retry for the communication, NOTE : the time is doubled at each attempt.",
 			"type": "integer",
 			"default": "1",
-			"order": "6",
+			"order": "7",
 			"displayName" : "Sleep Time Retry"
 			},
 		"maxRetry": {
 			"description": "Max number of retries for the communication",
 			"type": "integer",
 			"default": "3",
-			"order": "7",
+			"order": "8",
 			"displayName" : "Maximum Retry"
 			},
 		"HttpTimeout": {
 			"description": "Timeout in seconds for the HTTP operations with the HTTP Connector Relay",
 			"type": "integer",
 			"default": "10",
-			"order": "8",
+			"order": "9",
 			"displayName": "Http Timeout (in seconds)"
 			},
 		"verifySSL": {
         		"description": "Verify SSL certificate",
 			"type": "boolean",
 			"default": "False",
-			"order": "9",
-			"displayName": "Verify SSL"
-			},
-		"applyFilter": {
-        		"description": "Whether to apply filter before processing the data",
-			"type": "boolean",
-			"default": "False",
 			"order": "10",
-			"displayName": "Apply Filter"
-			},
-		"filterRule": {
-			"description": "JQ formatted filter to apply (applicable if applyFilter is True)",
-			"type": "string",
-			"default": ".[]",
-			"order": "11",
-			"displayName": "Filter Rule"
+			"displayName": "Verify SSL"
 			}
 	});
 

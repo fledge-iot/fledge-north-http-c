@@ -77,10 +77,30 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 			}
 		}
 	}
+
+	// Process any script
+	m_script = config->getItemAttribute("script", ConfigCategory::FILE_ATTR);
+	m_content = config->getValue("script");
+        if (m_script.empty() == false && m_content.empty() == false)
+	{
+		if ((m_python = new PythonScript(m_script)) != NULL)
+		{
+			Logger::getLogger()->info("Initialise script '%s': %s", m_script.c_str(), m_content.c_str());
+			m_python->setScript(m_content);
+		}
+		else
+		{
+			Logger::getLogger()->error("Failed to create a Python runtime");
+		}
+	}
+	else
+	{
+		m_python = NULL;
+	}
 }
 
 /**
- * Destructor fo rthe HTTP north class
+ * Destructor for the HTTP north class
  */
 HttpNorth::~HttpNorth()
 {
@@ -88,6 +108,8 @@ HttpNorth::~HttpNorth()
 		delete m_primary;
 	if (m_secondary)
 		delete m_secondary;
+	if (m_python)
+		delete m_python;
 }
 
 /**
@@ -100,50 +122,88 @@ HttpNorth::~HttpNorth()
  * primary or secoindary connection should be used.
  *
  * @param readings	The readings to send
+ * @return uint32_t 	The numebr of readings sent
  */
 uint32_t HttpNorth::send(const vector<Reading *> readings)
 {
-	ostringstream jsonData;
-	jsonData << "[";
+	string data;
 
-	// Fetch Reading* data
-	for (vector<Reading *>::const_iterator elem = readings.begin(); elem != readings.end(); ++elem)
+	if (m_python)
 	{
-		string value;
-		getReadingString(value, **elem);
-		jsonData << value << (elem < (readings.end() -1 ) ? ", " : "");
+		uint32_t rval = 0;
+
+		for (vector<Reading *>::const_iterator elem = readings.begin(); elem != readings.end(); ++elem)
+		{
+			if (m_python->execute(*elem, data) && sendData(data))
+		{
+				rval++;
+			}
+			else
+			{
+				Logger::getLogger()->error("Failed to convert and send payload");
+				return rval;
+			}
+		}
+
+		return rval;
 	}
+	else
+	{
+		ostringstream jsonData;
+		jsonData << "[";
 
-	jsonData << "]";
-	string data = jsonData.str();
+		// Fetch Reading* data
+		for (vector<Reading *>::const_iterator elem = readings.begin(); elem != readings.end(); ++elem)
+		{
+			string value;
+			getReadingString(value, **elem);
+			jsonData << value << (elem < (readings.end() -1 ) ? ", " : "");
+		}
 
+		jsonData << "]";
+		data = jsonData.str();
+		if (sendData(data))
+			return readings.size();
+		else
+			return 0;
+	}
+}
+
+/**
+ * Send the data to the HTTP destination
+ *
+ * @param data	The data to send
+ * @return bool	True if the data was sent
+ */
+bool HttpNorth::sendData(const string& data)
+{
+	Logger::getLogger()->debug("Send data %s", data.c_str());
 	lock_guard<mutex> guard(m_mutex);
 	if (m_failedOver)
 	{
 		if (m_secondary && m_secondary->send(data))
 		{
-			return readings.size();
+			return true;
 		}
 		if (m_primary && m_primary->send(data))
 		{
 			m_failedOver = false;
-			return readings.size();
+			return true;
 		}
 	}
 	else
 	{
 		if (m_primary && m_primary->send(data))
 		{
-			return readings.size();
+			return true;
 		}
 		if (m_secondary && m_secondary->send(data))
 		{
 			m_failedOver = true;
-			return readings.size();
+			return true;
 		}
 	}
-	return 0;
-
+	return false;
 }
 
 /**
