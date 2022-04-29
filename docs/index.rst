@@ -86,24 +86,20 @@ The payload that is sent by this plugin is a simple JSON presentation of a set o
 
 The fixed part of every reading contains the following
 
-+-----------+----------------------------------------------------------------+
-| Name      | Description                                                    |
-+===========+================================================================+
-| ts        | The timestamp as an ASCII string in ISO 8601 extended format.  |
-|           | If no time zone information is given it is assumed to indicate |
-|           | the use of UTC.  This timestamp is added by Fledge when it     |
-|           | first reads the data.                                          |
-+-----------+----------------------------------------------------------------+
-| user_ts   | The timestamp as an ASCII string in ISO 8601 extended format.  |
-|           | If no time zone information is given it is assumed to indicate |
-|           | the use of UTC. This timestamp is added by the device itself   |
-|           | and can be used to reflect the timestamp the data refers to    |
-|           | rather than the timestamp Fledge read the data.                |
-+-----------+----------------------------------------------------------------+
-| asset     | The name of the asset this reading represents.                 |
-+-----------+----------------------------------------------------------------+
-| readings  | A JSON object that contains the data points for this asset.    |
-+-----------+----------------------------------------------------------------+
+.. list-table::
+    :widths: 20 50
+    :header-rows: 1
+
+    * - Name
+      - Description
+    * - ts
+      - The timestamp as an ASCII string in ISO 8601 extended format. If no time zone information is given it is assumed to indicate the use of UTC.  This timestamp is added by Fledge when it first reads the data.
+    * - user_ts
+      - The timestamp as an ASCII string in ISO 8601 extended format. If no time zone information is given it is assumed to indicate the use of UTC. This timestamp is added by the device itself and can be used to reflect the timestamp the data refers to rather than the timestamp Fledge read the data.
+    * - asset
+      - The name of the asset this reading represents.
+    * - readings
+      - A JSON object that contains the data points for this asset.
 
 The content of the *readings* object is a set of JSON properties, each of which represents a data value. The type of these values may be integer, floating point, string, a JSON object or an array of floating point numbers.
 
