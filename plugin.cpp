@@ -52,7 +52,7 @@ static const char *default_config = QUOTE({
 			"description": "Defines the source of the data to be sent on the stream, this may be one of either readings, statistics or audit.",
 			"type": "enumeration",
 			"default": "readings",
-			"options": [ "readings", "statistics"],
+			"options": [ "readings", "statistics", "audit"],
 			"order": "4",
 			"displayName": "Source"
 			},
