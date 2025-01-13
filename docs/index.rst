@@ -214,3 +214,64 @@ Note that white space and formatting have been added for ease of reading the XML
    pip3 install dict2xml
 
 from the command line of the Fledge machine.
+
+Upstream Integration
+--------------------
+
+The ability to execute a script on the payload sent make this an ideal plugin to be used to integrate with upstream systems that have a REST API for ingesting data. In some cases scripts will be required in the plugin side in order to achieve that interface, although it may also be the case that the receiving system is a more convenient place to execute the code required to ingest the data from Fledge. Once such example in the Ignition platform. 
+
+Ignition Integration
+~~~~~~~~~~~~~~~~~~~~
+
+Ignition has a set of modules that may be loaded and provide capability for integration into Ignition. In particular it has an interface that allows for REST calls to be made to access Ignition, the WebDev module. This can be used allow Fledge to send data into Ignition systems and store data in tags within the Ignition Historian.
+
+The first step in the process is to create a REST endpoint in the Ignition WebDev module.
+
+  - In the Ignition Designer, open your Ignition project and go to the WebDev item in the Project Browser. Right click on the WebDev entry
+
+  - Create a New Folder and name it. Folder creation is optional but useful for group entry points. The folder name will appear in the URL of the end point that is created.
+
+  - Once you have created your new folder, right click on the folder and select New Python Resource. This will create the endpoint for your REST call. Name the Python resource, this name is the final component of the URL of your REST endpoint.
+
+  - Select the required REST operation. In this case we need to write a *doPost* method.
+
+You will be presented with a window in which you can write some code in Python.
+
+We can use the standard HTTP north plugin to write readings to the Ignition WebDev endpoint that we create and then in that end point we can take the data out of the readings and write them to Ignition historian tags. We can also create the tags within the Ignition historian if they do not exist.
+
+.. code:: python
+
+    def doPost(request, session):
+       tagBase = '[Sample_Tags]'
+       data = request['postData']
+       for index in range(len(data)):
+           readings = data[index]['readings']
+           asset = data[index]['asset']
+           writeTags = []
+           writeData = []
+           for dp in readings:
+               tag = tagBase + asset + "/" + dp
+               writeTags.append(tag)
+               writeData.append(readings[dp])
+               if not system.tag.exists(tag):
+                   tp = "Float8"
+                   if type(readings[dp]) == str:
+                       tp = "String"
+                   elif type(readings[dp]) == int:
+                       tp = "Int8"
+                   tagDef = {
+                       "name" : dp,
+                       "dataType" : tp,
+                       "valueSource" : "memory"
+                   }
+                   system.tag.configure(tagBase + asset, [ tagDef ], "a")
+           ret = system.tag.writeBlocking(writeTags, writeData)
+       return {'json': {'result': str(len(data))}}
+
+
+The asset name becomes a tag folder in the Ignition historian, we have hard coded the base location in which tags are created and each data point within the asset becomes a tag.
+
+.. note::
+
+   We set the type of the tag by examining the data. This is slightly risky as if the data is numeric we might receive a value that appears to be an integer but at later stages it becomes a floating point value.
+
