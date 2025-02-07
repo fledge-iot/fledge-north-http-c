@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string_utils.h>
 #include <rapidjson/document.h>
+#include <crypto.hpp>
 
 using namespace std;
 using namespace rapidjson;
@@ -26,11 +27,19 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 {
 	string url = config->getValue("URL");
 	m_primary = new HttpStream(config, url);
+	if (!m_username.empty())
+		m_primary->setAuth(m_username, m_password);
 	url = config->getValue("URL2");
 	if (url.length() > 0)
+	{
 		m_secondary = new HttpStream(config, url);
+		if (!m_username.empty())
+			m_primary->setAuth(m_username, m_password);
+	}
 	else
+	{
 		m_secondary = NULL;
+	}
 	if (config->itemExists("proxy"))
 	{
 		string proxy = config->getValue("proxy");
@@ -97,6 +106,8 @@ HttpNorth::HttpNorth(ConfigCategory *config) : m_failedOver(false)
 	{
 		m_python = NULL;
 	}
+	m_username = config->getValue("username");
+	m_password = config->getValue("password");
 }
 
 /**
@@ -332,6 +343,19 @@ void HttpNorth::HttpStream::setProxy(const string& proxy)
 void HttpNorth::HttpStream::addHeader(const string& name, const string& value)
 {
 	m_header.push_back(pair<string, string>(string(name), string(value)));
+}
+
+/**
+ * Create the credentials
+ *
+ * @param username	The username
+ * @param password	The password
+ */
+void HttpNorth::HttpStream::setAuth(const string& username, const string& password)
+{
+	string credentials = SimpleWeb::Crypto::Base64::encode(username + ":" + password);
+
+	m_header.push_back(pair<string, string>("Authorization", "Basic " + credentials));
 }
 
 /**

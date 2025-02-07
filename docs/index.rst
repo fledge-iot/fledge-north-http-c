@@ -1,5 +1,9 @@
 .. Images
 .. |http_1| image:: images/http_1.jpg
+.. |http_connection| image:: images/http_connection.jpg
+.. |http_data| image:: images/http_data.jpg
+.. |http_tuning| image:: images/http_tuning.jpg
+.. |http_auth| image:: images/http_auth.jpg
 
 .. Links
 .. |http-python| raw:: html
@@ -37,21 +41,48 @@ To create a north task to send to another Fledge you should first create the |ht
 
   - Configure the HTTP-C plugin
 
-    +----------+
-    | |http_1| |
-    +----------+
+ The configuration is split across as set of tabs, each of which contains related information
+
+Connection
+~~~~~~~~~~
+
+The basic connection information used to define the destination HTTP service.
+
+    +-------------------+
+    | |http_connection| |
+    +-------------------+
 
     - **URL**: The URL of the receiving |http-south|, the address and port should match the service in the up stream Fledge. The URL can specify either HTTP or HTTPS protocols.
 
-    - **Secondary URL**: The URL to failover to if the connection to the primary URL fails. If failover is not required then leave this field empty.
-
-    - **Source**: The data to send, this may be either the reading data or the statistics data
+    - **Secondary URL**: The URL to fail-over to if the connection to the primary URL fails. If fail-over is not required then leave this field empty.
 
     - **Proxy**: The host and port of the proxy server to use. Leave empty is a proxy is not in use. This should be formatted as an address followed by a colon and then the port or a hostname followed by a colon and then the port. E.g. 192.168.0.42:8080. If the default port is used then the port may be omitted.
 
     - **Headers**: An optional set of header fields to send in every request. The headers are defined as a JSON document with the name of each item in the document as header field name and the value the value of the header field.
 
+    - **Verify SSL**: When HTTPS rather the HTTP is used this toggle allows for the verification of the certificate that is used. If a self signed certificate is used then this should not be enabled.
+
+Data
+~~~~
+
+A set of configuration items that relate to the source of the data to send and any optional processing to apply to that data.
+
++-------------+
+| |http_data| |
++-------------+
+
+    - **Source**: The data to send, this may be either the reading data or the statistics data
+
     - **Script**: An optional Python script that can be used to convert the payload format. If given the script should contain a method called *convert* that will be passed a single reading as a JSON DICT and must return the new payload as a string.
+
+Tuning
+~~~~~~
+
+Various connection parameters can be tuned to cater for network conditions.
+
++---------------+
+| |http_tuning| |
++---------------+
 
     - **Sleep Time Retry**: A tuning parameter used to control how often a connection is retried to the up stream Fledge if it is not available. On every retry the time will be doubled.
 
@@ -59,7 +90,18 @@ To create a north task to send to another Fledge you should first create the |ht
 
     - **Http Timeout (in seconds)**: The timeout to set on the HTTP connection after which the connection will be closed. This can be used to tune the response of the system when communication links are unreliable.
 
-    - **Verify SSL**: When HTTPS rather the HTTP is used this toggle allows for the verification of the certificate that is used. If a self signed certificate is used then this should not be enabled.
+Authentication
+~~~~~~~~~~~~~~
+
+The plugin supports optional basic HTTP authentication, leave these entries blank if authentication is not required.
+
++-------------+
+| |http_auth| |
++-------------+
+
+    - **Username**: The username that will be used to create the HTTP basic authentication request.
+
+    - **Password**: The password that will be used to create the HTTP basic authentication request.
 
 
   - Click *Next*

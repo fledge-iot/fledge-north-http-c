@@ -32,21 +32,24 @@ static const char *default_config = QUOTE({
 			"type": "string",
 			"default": "http://localhost:6683/sensor-reading",
 			"order": "1",
-			"displayName": "URL"
+			"displayName": "URL",
+			"group" : "Connection"
 			},
 		"URL2": {
 			"description": "The URL of the HTTP Connector to send data to if the primary is unavailable, if empty there is no secondary",
 			"type": "string",
 			"default": "",
 			"order": "2",
-			"displayName": "Secondary URL"
+			"displayName": "Secondary URL",
+			"group" : "Connection"
 			},
 		"proxy": {
 			"description": "The name or address and port of a proxy server to use. This should be formatted as <hostname>:<port> or <address:port>",
 			"type": "string",
 			"default": "",
 			"order": "3",
-			"displayName": "Proxy"
+			"displayName": "Proxy",
+			"group" : "Connection"
 			},
 		"source": {
 			"description": "Defines the source of the data to be sent on the stream, this may be one of either readings, statistics or audit.",
@@ -54,49 +57,72 @@ static const char *default_config = QUOTE({
 			"default": "readings",
 			"options": [ "readings", "statistics", "audit"],
 			"order": "4",
-			"displayName": "Source"
+			"displayName": "Source",
+			"group" : "Data"
 			},
 		"headers": {
 			"description": "An optional set of header fields expressed as a JSON document",
 			"type": "JSON",
 			"default": "{}",
 			"order": "5",
-			"displayName": "Headers"
+			"displayName": "Headers",
+			"group" : "Connection"
 			},
 		"script" : {
 			"description" : "An optional HTTP payload translation Python script",
 			"type" : "script",
 			"default" : "",
 			"order" : "6",
-			"displayName": "Script"
+			"displayName": "Script",
+			"group" : "Data"
 			},
 		"retrySleepTime": {
         		"description": "Seconds between each retry for the communication, NOTE : the time is doubled at each attempt.",
 			"type": "integer",
 			"default": "1",
 			"order": "7",
-			"displayName" : "Sleep Time Retry"
+			"displayName" : "Sleep Time Retry",
+			"group" : "Tuning"
 			},
 		"maxRetry": {
 			"description": "Max number of retries for the communication",
 			"type": "integer",
 			"default": "3",
 			"order": "8",
-			"displayName" : "Maximum Retry"
+			"displayName" : "Maximum Retry",
+			"group" : "Tuning"
 			},
 		"HttpTimeout": {
 			"description": "Timeout in seconds for the HTTP operations with the HTTP Connector Relay",
 			"type": "integer",
 			"default": "10",
 			"order": "9",
-			"displayName": "Http Timeout (in seconds)"
+			"displayName": "Http Timeout (in seconds)",
+			"group" : "Tuning"
 			},
 		"verifySSL": {
         		"description": "Verify SSL certificate",
 			"type": "boolean",
 			"default": "False",
 			"order": "10",
-			"displayName": "Verify SSL"
+			"displayName": "Verify SSL",
+			"group" : "Connection"
+			},
+		"username": {
+        		"description": "Optional username to use for HTTP basic authentication",
+			"type": "string",
+			"default": "",
+			"order": "11",
+			"displayName": "Username",
+			"group" : "Authentication"
+			},
+		"password": {
+        		"description": "Password to use for HTTP basic authentication",
+			"type": "password",
+			"default": "",
+			"order": "12",
+			"displayName": "Password",
+			"group" : "Authentication"
 			}
 	});
 
