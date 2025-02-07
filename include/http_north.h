@@ -31,6 +31,8 @@ class HttpNorth {
 				void		addHeader(const std::string& name, const std::string& value);
 				void		setProxy(const std::string& proxy);
 				bool		send(const std::string& data);
+				void		setAuth(const std::string& username,
+							const std::string& password);
 			private:
 				std::vector<std::pair<std::string, std::string>>
 						m_header;
@@ -46,5 +48,7 @@ class HttpNorth {
 		std::string	m_script;
 		std::string	m_content;
 		PythonScript	*m_python;
+		std::string	m_username;
+		std::string	m_password;
 };
 #endif
