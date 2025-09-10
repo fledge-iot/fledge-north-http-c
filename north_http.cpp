@@ -313,10 +313,7 @@ HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sende
 							 maxRetry);
 
 	if (!m_sender)
-	{
 		Logger::getLogger()->error("http-north C plugin: Failed to create HTTP(S) sender for %s", url.c_str());
-		return;
-	}
 
 	m_header.push_back(pair<string, string>("Content-Type", "application/json"));
 }
