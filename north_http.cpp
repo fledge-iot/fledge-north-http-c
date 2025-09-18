@@ -312,6 +312,9 @@ HttpNorth::HttpStream::HttpStream(ConfigCategory *config, string& url) : m_sende
 							 retrySleepTime,
 							 maxRetry);
 
+	if (!m_sender)
+		Logger::getLogger()->error("http-north C plugin: Failed to create HTTP(S) sender for %s", url.c_str());
+
 	m_header.push_back(pair<string, string>("Content-Type", "application/json"));
 }
 
@@ -331,7 +334,8 @@ HttpNorth::HttpStream::~HttpStream()
  */
 void HttpNorth::HttpStream::setProxy(const string& proxy)
 {
-	m_sender->setProxy(proxy);
+	if (m_sender)
+		m_sender->setProxy(proxy);
 }
 
 /**
@@ -366,6 +370,9 @@ void HttpNorth::HttpStream::setAuth(const string& username, const string& passwo
  */
 bool HttpNorth::HttpStream::send(const string& data)
 {
+	if (!m_sender)
+		return false;
+	
 	try
 	{
 		int res = m_sender->sendRequest("POST", m_path, m_header, data);
